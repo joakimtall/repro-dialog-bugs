@@ -47,20 +47,6 @@ fun DialogBugsTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = LightColorScheme
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            (view.context as Activity).window.apply {
-                statusBarColor = Color.Transparent.toArgb()
-                navigationBarColor = Color.Transparent.toArgb()
-                //navigationBarColor = colorScheme.primary.toArgb()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    isNavigationBarContrastEnforced = false
-                }
-            }
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
-        }
-    }
 
     MaterialTheme(
         colorScheme = colorScheme,

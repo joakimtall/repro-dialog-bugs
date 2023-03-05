@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DialogBugsTheme {
-                println("Root window: ${findWindow(LocalView.current)}")
                 Surface(color = MaterialTheme.colorScheme.background) {
                     Screen()
                 }
@@ -62,28 +61,8 @@ private fun Screen() {
         }
         if (showDialog) {
             Dialog(onDismissRequest = {}, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-                var dialogColor by remember {
-                    mutableStateOf(
-                        Color.hsl(Math.random().toFloat() * 255, 0.5f, 0.5f)
-                    )
-                }
-                LaunchedEffect(Unit) {
-                    while (isActive) {
-                        dialogColor = Color.hsl(Math.random().toFloat() * 255, 0.5f, 0.5f)
-                        delay(10000)
-                    }
-                }
-                println("Dialog window: ${findWindow(LocalView.current)}")
-                findWindow(LocalView.current)?.let { window ->
-                    WindowCompat.setDecorFitsSystemWindows(window, false)
-                    window.apply {
-                        addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                        statusBarColor = Color.Transparent.toArgb()
-                        navigationBarColor = Color.Transparent.toArgb()
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            isNavigationBarContrastEnforced = false
-                        }
-                    }
+                val dialogColor by remember {
+                    mutableStateOf(Color.hsl(Math.random().toFloat() * 255, 0.5f, 0.5f))
                 }
                 Box(
                     modifier = Modifier
@@ -98,21 +77,6 @@ private fun Screen() {
         }
     }
 }
-
-@Composable
-private fun findWindow(view: View): Window? {
-    val parent = view.parent
-    return if (parent is DialogWindowProvider)
-        parent.window
-    else view.context.findWindow()
-}
-
-private tailrec fun Context.findWindow(): Window? =
-    when (this) {
-        is Activity -> window
-        is ContextWrapper -> baseContext.findWindow()
-        else -> null
-    }
 
 @Preview(showBackground = true)
 @Composable
