@@ -23,11 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.DialogWindowProvider
+import androidx.compose.ui.window.*
 import androidx.core.view.WindowCompat
 import com.example.dialogbugs.ui.theme.DialogBugsTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
@@ -47,7 +46,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun Screen() {
     Box(
@@ -55,21 +53,24 @@ private fun Screen() {
             .fillMaxSize()
             .systemBarsPadding(),
     ) {
-        var showDialog by remember { mutableStateOf(true) }
+        var showDialog by remember { mutableStateOf(false) }
         Button(onClick = { showDialog = true }) {
             Text(text = "Show dialog")
         }
         if (showDialog) {
             Dialog(onDismissRequest = {}, properties = DialogProperties(usePlatformDefaultWidth = false)) {
                 val dialogColor by remember {
-                    mutableStateOf(Color.hsl(Math.random().toFloat() * 255, 0.5f, 0.5f))
+                    mutableStateOf(Color.hsl(200f, 0.5f, 0.5f))
                 }
+                val systemUiController = rememberSystemUiController()
+                LaunchedEffect(key1 = Unit, block = {
+                    systemUiController.setSystemBarsColor(Color.Green, darkIcons = true, isNavigationBarContrastEnforced = false)
+                })
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(dialogColor)
-                ) {
-                }
+                ) {}
                 Button(onClick = { showDialog = false }) {
                     Text(text = "Close dialog")
                 }
